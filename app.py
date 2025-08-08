@@ -151,3 +151,4 @@ async def ingest_document(file: UploadFile = File(...)):
 #
 # 3. In your terminal, run the following command:
 #    uvicorn ingestion_server:app --reload --port 8001
+# Custom Build command : uvicorn app:app --host 0.0.0.0 --port 8000 --reload
