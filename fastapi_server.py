@@ -1,6 +1,5 @@
-# fastapi_server.py
+# fastapi_server.py (REVISED)
 import os
-import json
 from fastapi import FastAPI, HTTPException, Query
 from dotenv import load_dotenv
 
@@ -12,7 +11,6 @@ from structured_query_component import structured_output_runnable, PolicyDetails
 load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found in environment variables.")
 
@@ -22,13 +20,11 @@ app = FastAPI(title="Unified RAG API with Structured Output")
 # Helper function to format documents into a single string
 def format_docs_for_prompt(docs):
     formatted_string = ""
-    sources_list = []
     for doc in docs:
         source_name = doc.metadata.get('source', 'Unknown')
         page_number = doc.metadata.get('page', 'Unknown')
         formatted_string += f"--- Source: {source_name}, Page: {page_number} ---\n{doc.page_content}\n\n"
-        sources_list.append(f"{source_name} (Page {page_number})")
-    return formatted_string, sources_list
+    return formatted_string
 
 @app.get("/rag_structured")
 async def rag_with_structured_output(query: str = Query(..., description="Ask a question and extract details")):
@@ -38,23 +34,22 @@ async def rag_with_structured_output(query: str = Query(..., description="Ask a 
     try:
         # Step 1: Retrieve relevant documents
         docs = retriever.invoke(query)
+        context_str = format_docs_for_prompt(docs)
         
-        # Step 2: Format the retrieved documents into a single context string
-        context_str, _ = format_docs_for_prompt(docs)
-        
-        # Step 3: Invoke the structured output runnable
-        # This component uses a custom prompt to get the LLM to provide a structured response.
+        # Step 2: Invoke the structured output runnable
+        # Pass the context and query as a single string to the runnable.
+        # It handles the Pydantic parsing automatically.
         structured_response: PolicyDetails = structured_output_runnable.invoke(
-            {"context": context_str, "query": query}
+            f"Query: {query}\n\nContext:\n{context_str}"
         )
         
-        # Step 4: Add sources to the Pydantic model before returning
+        # Step 3: Add sources from the retrieved documents to the Pydantic model
         structured_response.sources = [
             f"{doc.metadata.get('source', 'Unknown')} (Page {doc.metadata.get('page', 'Unknown')})" 
             for doc in docs
         ]
 
-        # Step 5: Return the Pydantic model as a JSON response
+        # Step 4: Return the Pydantic model as a JSON response
         return structured_response
 
     except Exception as e:

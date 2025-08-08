@@ -10,13 +10,13 @@ from retriever import retriever  # <-- Import pre-configured retriever
 load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-
+# print(GOOGLE_API_KEY)
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found in environment variables.")
 
 # Gemini LLM
 llm = ChatGoogleGenerativeAI(
-    model="gemini-1.5-pro",
+    model="gemini-2.5-pro",
     google_api_key=GOOGLE_API_KEY,
     temperature=0
 )
