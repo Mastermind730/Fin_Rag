@@ -80,7 +80,7 @@ async def startup_event():
         logging.info("Ready to receive PDF files at the /ingest endpoint.")
 
     except Exception as e:
-        logging.error(f"Could not connect to or create Pinecone index: {e}")
+        logging.error(f"Not able to connect to or create Pinecone index: {e}")
         raise
 
 @app.post("/ingest")
