@@ -13,7 +13,6 @@ import logging
 from pinecone import Pinecone, ServerlessSpec
 from dotenv import load_dotenv
 
-
 load_dotenv()
 
 # Set up basic logging
