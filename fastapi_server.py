@@ -16,7 +16,7 @@ if not GOOGLE_API_KEY:
 
 # FastAPI app
 # app = FastAPI(title="Unified RAG API with Structured Output")
-router = APIRouter(title="Unified RAG API with Structured Output")
+router = APIRouter()
 
 # Helper function to format documents into a single string
 def format_docs_for_prompt(docs):

@@ -4,6 +4,7 @@ from fastapi import FastAPI, HTTPException, Query
 from dotenv import load_dotenv
 from langchain_google_genai import ChatGoogleGenerativeAI
 from langchain.chains import RetrievalQA
+from fastapi_server import router
 from retriever import retriever  # <-- Import pre-configured retriever
 
 # Load environment variables
@@ -11,6 +12,7 @@ load_dotenv()
 
 GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
 # print(GOOGLE_API_KEY)
+
 if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found in environment variables.")
 
@@ -29,7 +31,7 @@ qa_chain = RetrievalQA.from_chain_type(
 )
 
 # FastAPI app
-app = FastAPI(title="Document Retrieval + Gemini API")
+router = APIRouter()
 
 @app.get("/retrieve")
 async def retrieve_documents(query: str = Query(..., description="Search query"), top_k: int = 5):

@@ -51,6 +51,7 @@ app = FastAPI(
 )
 
 app.include_router(fastapi_server.router)
+app.include_router(retrieval_server.router)
 
 @app.on_event("startup")
 async def startup_event():
