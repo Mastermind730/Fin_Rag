@@ -1,6 +1,6 @@
 # fastapi_server.py (REVISED)
 import os
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import APIRouter, FastAPI, HTTPException, Query
 from dotenv import load_dotenv
 
 # Import the retriever and the structured output component
@@ -15,7 +15,8 @@ if not GOOGLE_API_KEY:
     raise ValueError("GOOGLE_API_KEY not found in environment variables.")
 
 # FastAPI app
-app = FastAPI(title="Unified RAG API with Structured Output")
+# app = FastAPI(title="Unified RAG API with Structured Output")
+router = APIRouter(title="Unified RAG API with Structured Output")
 
 # Helper function to format documents into a single string
 def format_docs_for_prompt(docs):
@@ -26,7 +27,7 @@ def format_docs_for_prompt(docs):
         formatted_string += f"--- Source: {source_name}, Page: {page_number} ---\n{doc.page_content}\n\n"
     return formatted_string
 
-@app.get("/rag_structured")
+@router.get("/rag_structured")
 async def rag_with_structured_output(query: str = Query(..., description="Ask a question and extract details")):
     """
     Performs a RAG query and returns a structured output containing the answer and extracted details.

@@ -13,6 +13,8 @@ import logging
 from pinecone import Pinecone, ServerlessSpec
 from dotenv import load_dotenv
 
+import fastapi_server
+
 load_dotenv()
 
 # Set up basic logging
@@ -47,6 +49,8 @@ app = FastAPI(
     title="Document Ingestion API",
     description="An API to process documents, create embeddings locally, and store them in Pinecone."
 )
+
+app.include_router(fastapi_server.router)
 
 @app.on_event("startup")
 async def startup_event():
